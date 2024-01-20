@@ -12,7 +12,8 @@ install-dependencies:
 	pnpm add superjson
 	pnpm add zod
 	pnpm add jsonwebtoken
-	pnpm add -D @types/jsonwebtoken
+	pnpm add bcryptjs
+	pnpm add -D @types/jsonwebtoken @types/bcryptjs
 
 	pnpm add @prisma/client
 	pnpm add -D prisma

@@ -15,6 +15,7 @@
     "@trpc/client": "^10.45.0",
     "@trpc/react-query": "^10.45.0",
     "@trpc/server": "^10.45.0",
+    "bcryptjs": "^2.4.3",
     "jsonwebtoken": "^9.0.2",
     "next": "14.1.0",
     "react": "^18",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.17.7",
+    "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/node": "^20",
     "@types/react": "^18",
