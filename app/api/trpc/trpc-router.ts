@@ -2,8 +2,6 @@ import authRouter from '@/server/auth-route';
 import { getMeHandler } from '@/server/user-controller';
 import { createContext } from '@/utils/trpc-context';
 import { protectedProcedure, t } from '@/utils/trpc-server';
-import { createServerSideHelpers } from '@trpc/react-query/server';
-import SuperJSON from 'superjson';
 
 const healthCheckerRouter = t.router({
   healthchecker: t.procedure.query(() => {
@@ -24,11 +22,11 @@ export const appRouter = t.mergeRouters(
   userRouter
 );
 
-export const createSSRHelper = () =>
-  createServerSideHelpers({
-    router: appRouter,
-    transformer: SuperJSON,
-    ctx: createContext,
-  });
+export const createCaller = t.createCallerFactory(appRouter);
+
+export const createAsyncCaller = async () => {
+  const context = await createContext();
+  return createCaller(context);
+};
 
 export type AppRouter = typeof appRouter;

@@ -1,29 +1,17 @@
 import { TRPCError } from '@trpc/server';
-import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import { prisma } from '@/lib/prisma';
+import { cookies } from 'next/headers';
 
-export const deserializeUser = async ({
-  req,
-  res,
-}: {
-  req: NextRequest;
-  res: NextResponse;
-}) => {
+export const deserializeUser = async () => {
+  const cookieStore = cookies();
   try {
     let token;
-    if (
-      req.headers.get('authorization') &&
-      req.headers.get('authorization')?.startsWith('Bearer')
-    ) {
-      token = req.headers.get('authorization')?.split(' ')[1];
-    } else if (req.cookies.get('token')) {
-      token = req.cookies.get('token')?.value;
+    if (cookieStore.get('token')) {
+      token = cookieStore.get('token')?.value;
     }
 
     const notAuthenticated = {
-      req,
-      res,
       user: null,
     };
 
@@ -44,10 +32,9 @@ export const deserializeUser = async ({
       return notAuthenticated;
     }
 
+    const { password, ...userWithoutPassword } = user;
     return {
-      req,
-      res,
-      user: { ...user, password: user.password === undefined },
+      user: userWithoutPassword,
     };
   } catch (err: any) {
     throw new TRPCError({

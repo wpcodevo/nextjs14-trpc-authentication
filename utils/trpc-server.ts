@@ -16,4 +16,5 @@ const isAuthed = t.middleware(({ next, ctx }) => {
   return next();
 });
 
+export const pubicProcedure = t.procedure;
 export const protectedProcedure = t.procedure.use(isAuthed);

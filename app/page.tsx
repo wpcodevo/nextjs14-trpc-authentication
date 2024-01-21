@@ -1,15 +1,16 @@
-'use client';
-
-import { trpc } from '@/utils/trpc';
+import Header from '@/components/header';
 
 export default function Home() {
-  let { data, isLoading, isFetching } = trpc.healthchecker.useQuery();
-  if (isLoading || isFetching) return <p>Loading...</p>;
-
   return (
-    <div className='text-xl font-bold'>
-      <h1>Status: {data?.status}</h1>
-      <h1>Message: {data?.message}</h1>
-    </div>
+    <>
+      <Header />
+      <section className='bg-ct-blue-600 min-h-screen pt-20'>
+        <div className='max-w-4xl mx-auto bg-ct-dark-100 rounded-md h-[20rem] flex justify-center items-center'>
+          <p className='text-3xl font-semibold'>
+            Implement Authentication with tRPC in Next.js 14
+          </p>
+        </div>
+      </section>
+    </>
   );
 }

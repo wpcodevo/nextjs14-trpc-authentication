@@ -2,8 +2,8 @@ import { CreateUserInput, LoginUserInput } from '@/lib/user-schema';
 import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/prisma';
 import { TRPCError } from '@trpc/server';
-import { Context } from '@/utils/trpc-context';
 import jwt from 'jsonwebtoken';
+import { cookies } from 'next/headers';
 
 export const registerHandler = async ({
   input,
@@ -21,10 +21,11 @@ export const registerHandler = async ({
       },
     });
 
+    const { password, ...userWithoutPassword } = user;
     return {
       status: 'success',
       data: {
-        user: { ...user, password: user.password === undefined },
+        user: userWithoutPassword,
       },
     };
   } catch (err: any) {
@@ -38,13 +39,7 @@ export const registerHandler = async ({
   }
 };
 
-export const loginHandler = async ({
-  input,
-  ctx: { res },
-}: {
-  input: LoginUserInput;
-  ctx: Context;
-}) => {
+export const loginHandler = async ({ input }: { input: LoginUserInput }) => {
   try {
     const user = await prisma.user.findUnique({
       where: { email: input.email },
@@ -63,14 +58,12 @@ export const loginHandler = async ({
     });
 
     const cookieOptions = {
-      name: 'token',
-      value: token,
       httpOnly: true,
       path: '/',
       secure: process.env.NODE_ENV !== 'development',
       maxAge: 60 * 60,
     };
-    res.cookies.set(cookieOptions);
+    cookies().set('token', token, cookieOptions);
 
     return {
       status: 'success',
@@ -81,11 +74,9 @@ export const loginHandler = async ({
   }
 };
 
-export const logoutHandler = async ({ ctx: { res } }: { ctx: Context }) => {
+export const logoutHandler = async () => {
   try {
-    res.cookies.set({
-      name: 'token',
-      value: '',
+    cookies().set('token', '', {
       maxAge: -1,
     });
     return { status: 'success' };

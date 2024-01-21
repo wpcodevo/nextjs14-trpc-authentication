@@ -1,5 +1,5 @@
 import { createUserSchema, loginUserSchema } from '@/lib/user-schema';
-import { t } from '@/utils/trpc-server';
+import { protectedProcedure, pubicProcedure, t } from '@/utils/trpc-server';
 import {
   loginHandler,
   logoutHandler,
@@ -7,13 +7,13 @@ import {
 } from './auth-controller';
 
 const authRouter = t.router({
-  registerUser: t.procedure
+  registerUser: pubicProcedure
     .input(createUserSchema)
     .mutation(({ input }) => registerHandler({ input })),
-  loginUser: t.procedure
+  loginUser: pubicProcedure
     .input(loginUserSchema)
-    .mutation(({ input, ctx }) => loginHandler({ input, ctx })),
-  logoutUser: t.procedure.mutation(({ ctx }) => logoutHandler({ ctx })),
+    .mutation(({ input }) => loginHandler({ input })),
+  logoutUser: protectedProcedure.mutation(() => logoutHandler()),
 });
 
 export default authRouter;
